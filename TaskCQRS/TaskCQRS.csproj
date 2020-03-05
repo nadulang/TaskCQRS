@@ -1,0 +1,66 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Application\" />
+    <Folder Include="Domain\" />
+    <Folder Include="Application\Interfaces\" />
+    <Folder Include="Application\UseCases\" />
+    <Folder Include="Application\Models\" />
+    <Folder Include="Application\Models\Query\" />
+    <Folder Include="Domain\Entities\" />
+    <Folder Include="Presenter\" />
+    <Folder Include="Presenter\Controllers\" />
+    <Folder Include="Infrastructure\" />
+    <Folder Include="Infrastructure\Persistences\" />
+    <Folder Include="Application\UseCases\Customer\" />
+    <Folder Include="Application\UseCases\Customer\Command\" />
+    <Folder Include="Application\UseCases\Customer\Models\" />
+    <Folder Include="Application\UseCases\Customer\Command\CreateCustomer\" />
+    <Folder Include="Application\UseCases\Customer\Queries\" />
+    <Folder Include="Application\UseCases\Customer\Queries\GetCustomer\" />
+    <Folder Include="Application\UseCases\Customer\Queries\GetCustomers\" />
+    <Folder Include="Application\UseCases\CustomerPayment\" />
+    <Folder Include="Application\UseCases\Merchant\" />
+    <Folder Include="Application\UseCases\Product\" />
+    <Folder Include="Application\UseCases\Merchant\Command\" />
+    <Folder Include="Application\UseCases\Merchant\Queries\" />
+    <Folder Include="Application\UseCases\Merchant\Queries\GetMerchant\" />
+    <Folder Include="Application\UseCases\Merchant\Queries\GetMerchants\" />
+    <Folder Include="Application\UseCases\Product\Command\" />
+    <Folder Include="Application\UseCases\Product\Queries\" />
+    <Folder Include="Application\UseCases\Product\Queries\GetProduct\" />
+    <Folder Include="Application\UseCases\Product\Queries\GetProducts\" />
+    <Folder Include="Application\UseCases\CustomerPayment\Command\" />
+    <Folder Include="Application\UseCases\CustomerPayment\Queries\" />
+    <Folder Include="Application\UseCases\CustomerPayment\Queries\GetCustomerPayment\" />
+    <Folder Include="Application\UseCases\CustomerPayment\Queries\GetCustomerPayments\" />
+    <Folder Include="Application\UseCases\Customer\Command\DeleteCustomer\" />
+    <Folder Include="Application\UseCases\Customer\Command\UpdateCustomer\" />
+    <Folder Include="Application\UseCases\CustomerPayment\Command\CreateCustomerPayment\" />
+    <Folder Include="Application\UseCases\CustomerPayment\Command\DeleteCustomerPayment\" />
+    <Folder Include="Application\UseCases\CustomerPayment\Command\UpdateCustomerPayment\" />
+    <Folder Include="Application\UseCases\Merchant\Command\CreateMerchant\" />
+    <Folder Include="Application\UseCases\Merchant\Command\DeleteMerchant\" />
+    <Folder Include="Application\UseCases\Merchant\Command\UpdateMerchant\" />
+    <Folder Include="Application\UseCases\Product\Command\CreateProduct\" />
+    <Folder Include="Application\UseCases\Product\Command\DeleteProduct\" />
+    <Folder Include="Application\UseCases\Product\Command\UpdateProduct\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.2" />
+    <PackageReference Include="MediatR" Version="8.0.1" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.2" />
+  </ItemGroup>
+</Project>

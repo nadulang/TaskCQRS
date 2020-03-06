@@ -25,6 +25,7 @@ namespace TaskCQRS.Application.UseCases.CustomerPayment.Queries.GetCustomerPayme
 
             var result = data.Select(e => new CustomerPayments
             {
+                id = e.id,
                 customer_id = e.customer_id,
                 name_on_card = e.name_on_card,
                 exp_month = e.exp_month,

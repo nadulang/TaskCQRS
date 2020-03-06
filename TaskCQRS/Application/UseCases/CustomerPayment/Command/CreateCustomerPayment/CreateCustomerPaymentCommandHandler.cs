@@ -22,6 +22,7 @@ namespace TaskCQRS.Application.UseCases.CustomerPayment.Command.CreateCustomerPa
                 name_on_card = request.Data.name_on_card,
                 exp_month = request.Data.exp_month,
                 exp_year = request.Data.exp_year,
+                postal_code = request.Data.postal_code,
                 credit_card_number = request.Data.credit_card_number
             };
 

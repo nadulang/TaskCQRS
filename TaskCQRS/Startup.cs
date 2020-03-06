@@ -19,7 +19,10 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using TaskCQRS.Infrastructure.Persistences;
 using TaskCQRS.Application.UseCases.Customer.Queries.GetCustomer;
+using TaskCQRS.Application.UseCases.CustomerPayment.Queries.GetCustomerPayment;
 using TaskCQRS.Application.Interfaces;
+using TaskCQRS.Domain.Entities;
+using TaskCQRS.Application.UseCases.Customer.Command.CreateCustomer;
 using System.Reflection;
 
 namespace TaskCQRS
@@ -38,8 +41,13 @@ namespace TaskCQRS
         {
             services.AddDbContext<EcommerceContext>(options => options.UseNpgsql("Host=127.0.0.1;Database=ecommercedb;Username=postgres;Password=docker"));
             services.AddControllers();
+            services.AddMvc()
+                   .AddFluentValidation();
+            //services.AddTransient<IValidator<Customers>, CreateCustomerCommandValidation>()
 
-            services.AddMediatR(typeof(GetCustomerQueryHandler).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(GetCustomerQueryHandler).GetTypeInfo().Assembly)
+                    .AddMediatR(typeof(GetCustomerPaymentQueryHandler).GetTypeInfo().Assembly);
+
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidatorBehaviour<,>));
 
             services.AddAuthentication(options => {

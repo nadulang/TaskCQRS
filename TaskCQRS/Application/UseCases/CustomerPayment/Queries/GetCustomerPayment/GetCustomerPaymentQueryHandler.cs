@@ -17,23 +17,12 @@ namespace TaskCQRS.Application.UseCases.CustomerPayment.Queries.GetCustomerPayme
 
         public async Task<GetCustomerPaymentDto> Handle(GetCustomerPaymentQuery request, CancellationToken cancellationToken)
         {
-            var result = await _context.PaymentsData.FirstOrDefaultAsync(e => e.id == request.id);
+            var result = await _context.PaymentsData.FindAsync(request.id);
             return new GetCustomerPaymentDto
             {
                 Success = true,
                 Message = "Customer succesfully retrieved",
-                Data =
-                {
-                    customer_id = result.customer_id,
-                    name_on_card = result.name_on_card,
-                    exp_month = result.exp_month,
-                    exp_year = result.exp_year,
-                    postal_code = result.postal_code,
-                    credit_card_number = result.credit_card_number,
-                    created_at = result.created_at,
-                    updated_at = result.updated_at
-
-                }
+                Data = result
             };
         }
     }

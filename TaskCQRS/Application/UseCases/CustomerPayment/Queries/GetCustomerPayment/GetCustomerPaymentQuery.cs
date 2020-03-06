@@ -4,5 +4,10 @@ namespace TaskCQRS.Application.UseCases.CustomerPayment.Queries.GetCustomerPayme
     public class GetCustomerPaymentQuery : IRequest<GetCustomerPaymentDto>
     {
         public int id { get; set; }
+
+        public GetCustomerPaymentQuery(int Id)
+        {
+            id = Id;
+        }
     }
 }

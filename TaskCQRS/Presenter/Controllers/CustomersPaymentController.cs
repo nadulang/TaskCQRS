@@ -1,6 +1,8 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Net;
+﻿using TaskCQRS.Application.UseCases.CustomerPayment.Queries.GetCustomerPayment;
+using TaskCQRS.Application.UseCases.CustomerPayment.Queries.GetCustomerPayments;
+using TaskCQRS.Application.UseCases.CustomerPayment.Command.CreateCustomerPayment;
+using TaskCQRS.Application.UseCases.CustomerPayment.Command.DeleteCustomerPayment;
+using TaskCQRS.Application.UseCases.CustomerPayment.Command.UpdateCustomerPayment;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,110 +12,64 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using TaskCQRS.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
-using TaskCQRS.Infrastructure.Persistences;
+using MediatR;
 
 namespace TaskCQRS.Presenter.Controllers
 {
     [ApiController]
-    [Authorize]
+    [AllowAnonymous]
     [Route("api/Payment")]
 
     public class CustomersPaymentController : ControllerBase
     {
-        private readonly EcommerceContext _context;
+        private IMediator _mediatr;
 
-        public CustomersPaymentController(EcommerceContext context)
+        public CustomersPaymentController(IMediator mediatr)
         {
-            _context = context;
+            _mediatr = mediatr;
+
         }
 
+
         [HttpGet]
-        public IActionResult Get()
+        public async Task<ActionResult<GetCustomerPaymentsDto>> Get()
         {
-            var cust = _context.PaymentsData;
-            return Ok(new { message = "success retrieve data", status = true, data = cust });
+            var result = new GetCustomerPaymentsQuery();
+            return Ok(await _mediatr.Send(result));
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<ActionResult<GetCustomerPaymentDto>> Get(int id)
         {
-            try
-            {
-                var getit = _context.PaymentsData.First(e => e.id == id);
-                _context.SaveChanges();
-                return Ok(new { message = "success retrieve data", status = true, data = getit });
-            }
-
-            catch (Exception)
-            {
-                return NotFound();
-            }
-
+            var result = new GetCustomerPaymentQuery(id);
+            return Ok(await _mediatr.Send(result));
         }
 
         [HttpPost]
-        public IActionResult Post(Payments custs)
+        public async Task<IActionResult> Post(CreateCustomerPaymentCommand data)
         {
-            var customer = custs.data.attributes;
-            _context.PaymentsData.Add(customer);
-            var time = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime()).TotalSeconds;
-            customer.created_at = (long)time;
-            customer.updated_at = (long)time;
-            _context.SaveChanges();
-            return Ok(new { message = "success retrieve data", status = true, data = customer });
+            var result = await _mediatr.Send(data);
+            return Ok(result);
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
-        {
-            try
-            {
-                var del = _context.PaymentsData.First(e => e.id == id);
-                _context.PaymentsData.Remove(del);
-                _context.SaveChanges();
-                return Ok("Your data has been deleted.");
-            }
 
-            catch (Exception)
-            {
-                return NotFound();
-            }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var command = new DeleteCustomerPaymentCommand(id);
+            var result = await _mediatr.Send(command);
+
+            return result != null ? (IActionResult)Ok(new { Message = "success" }) : NotFound(new { Message = "not found" });
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Payments cust)
+        public async Task<IActionResult> Put(int ID, UpdateCustomerPaymentCommand data)
         {
-            var customer = cust.data.attributes;
-
             try
             {
-                var g = _context.PaymentsData.Find(id);
-                g.customer_id = customer.customer_id;
-                g.name_on_card = customer.name_on_card;
-                g.exp_month = customer.exp_month;
-                g.exp_year = customer.exp_year;
-                g.postal_code = customer.postal_code;
-                g.credit_card_number = customer.credit_card_number;
-
-                var time = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime()).TotalSeconds;
-                g.updated_at = (long)time;
-
-                _context.SaveChanges();
-
-                var w = new CustomerPayments
-                {
-                    id = g.id,
-                    customer_id = customer.customer_id,
-                    name_on_card = customer.name_on_card,
-                    exp_month = customer.exp_month,
-                    exp_year = customer.exp_year,
-                    postal_code = customer.postal_code,
-                    credit_card_number = customer.credit_card_number,
-                    created_at = g.created_at,
-                    updated_at = g.updated_at
-                };
-
-                return Ok(new { message = "success retrieve data", status = true, data = w });
+                data.Data.id = ID;
+                var result = await _mediatr.Send(data);
+                return Ok(result);
             }
 
             catch (Exception)
@@ -121,16 +77,6 @@ namespace TaskCQRS.Presenter.Controllers
                 return NotFound();
             }
         }
-    }
-
-    public class Payments
-    {
-        public Attributes2 data { get; set; }
-    }
-
-    public class Attributes2
-    {
-        public CustomerPayments attributes { get; set; }
     }
 
 }

@@ -19,7 +19,6 @@
     <Folder Include="Infrastructure\Persistences\" />
     <Folder Include="Application\UseCases\Customer\" />
     <Folder Include="Application\UseCases\Customer\Command\" />
-    <Folder Include="Application\UseCases\Customer\Models\" />
     <Folder Include="Application\UseCases\Customer\Command\CreateCustomer\" />
     <Folder Include="Application\UseCases\Customer\Queries\" />
     <Folder Include="Application\UseCases\Customer\Queries\GetCustomer\" />

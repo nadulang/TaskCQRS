@@ -21,7 +21,7 @@ namespace TaskCQRS.Application.UseCases.CustomerPayment.Queries.GetCustomerPayme
             return new GetCustomerPaymentDto
             {
                 Success = true,
-                Message = "Customer succesfully retrieved",
+                Message = "Payment succesfully retrieved",
                 Data = result
             };
         }

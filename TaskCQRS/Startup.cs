@@ -23,10 +23,14 @@ using TaskCQRS.Application.UseCases.CustomerPayment.Queries.GetCustomerPayment;
 using TaskCQRS.Application.Interfaces;
 using TaskCQRS.Domain.Entities;
 using TaskCQRS.Application.UseCases.Customer.Command.CreateCustomer;
+using TaskCQRS.Application.UseCases.Customer.Command.UpdateCustomer;
 using System.Reflection;
 using TaskCQRS.Application.UseCases.CustomerPayment.Command.CreateCustomerPayment;
+using TaskCQRS.Application.UseCases.CustomerPayment.Command.UpdateCustomerPayment;
 using TaskCQRS.Application.UseCases.Merchant.Command.CreateMerchant;
+using TaskCQRS.Application.UseCases.Merchant.Command.UpdateMerchant;
 using TaskCQRS.Application.UseCases.Product.Command.CreateProduct;
+using TaskCQRS.Application.UseCases.Product.Command.UpdateProduct;
 
 namespace TaskCQRS
 {
@@ -47,11 +51,16 @@ namespace TaskCQRS
             services.AddMvc()
                    .AddFluentValidation();
 
-            services.AddTransient<IValidator<CreateCustomerCommand>, CreateCustomerCommandValidation>();
-            services.AddTransient<IValidator<CreateCustomerPaymentCommand>, CreateCustomerPaymentCommandValidation>();
-            services.AddTransient<IValidator<CreateMerchantCommand>, CreateMerchantCommandValidaton>();
-            services.AddTransient<IValidator<CreateProductCommand>, CreateProductCommandValidation>();
-                
+            services.AddTransient<IValidator<CreateCustomerCommand>, CreateCustomerCommandValidation>()
+                    .AddTransient<IValidator<UpdateCustomerCommand>, UpdateCustomerCommandValidation>();
+            services.AddTransient<IValidator<CreateCustomerPaymentCommand>, CreateCustomerPaymentCommandValidation>()
+                    .AddTransient<IValidator<UpdateCustomerPaymentCommand>, UpdateCustomerPaymentCommandValidation>();
+            services.AddTransient<IValidator<CreateMerchantCommand>, CreateMerchantCommandValidaton>()
+                    .AddTransient<IValidator<UpdateMerchantCommand>, UpdateMerchantCommandValidation>();
+            services.AddTransient<IValidator<CreateProductCommand>, CreateProductCommandValidation>()
+                    .AddTransient<IValidator<UpdateProductCommand>, UpdateProductCommandValidation>();
+
+
             services.AddMediatR(typeof(GetCustomerQueryHandler).GetTypeInfo().Assembly)
                     .AddMediatR(typeof(GetCustomerPaymentQueryHandler).GetTypeInfo().Assembly);
 

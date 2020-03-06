@@ -1,4 +1,9 @@
-﻿using System.ComponentModel;
+﻿using TaskCQRS.Application.UseCases.Product.Queries.GetProduct;
+using TaskCQRS.Application.UseCases.Product.Queries.GetProducts;
+using TaskCQRS.Application.UseCases.Product.Command.CreateProduct;
+using TaskCQRS.Application.UseCases.Product.Command.DeleteProduct;
+using TaskCQRS.Application.UseCases.Product.Command.UpdateProduct;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Net;
 using System;
@@ -11,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using TaskCQRS.Domain.Entities;
 using TaskCQRS.Infrastructure.Persistences;
 using Microsoft.AspNetCore.Authorization;
+using MediatR;
 
 namespace TaskCQRS.Presenter.Controllers
 {
@@ -20,114 +26,66 @@ namespace TaskCQRS.Presenter.Controllers
 
     public class ProductsController : ControllerBase
     {
-        private readonly EcommerceContext _context;
+        private IMediator _mediatr;
 
-        public ProductsController(EcommerceContext context)
+        public ProductsController(IMediator mediatr)
         {
-            _context = context;
+            _mediatr = mediatr;
+
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<ActionResult<GetProductsDto>> Get()
         {
-            var pro = _context.ProductsData;
-            return Ok(new { message = "success retrieve data", status = true, data = pro });
+            var result = new GetProductsQuery();
+            return Ok(await _mediatr.Send(result));
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<ActionResult<GetProductDto>> Get(int id)
         {
-            try
-            {
-                var getit = _context.ProductsData.First(e => e.id == id);
-                _context.SaveChanges();
-                return Ok(new { message = "success retrieve data", status = true, data = getit });
-            }
+            
+            var command = new GetProductQuery(id);
+            var result = await _mediatr.Send(command);
+            return command != null ? (ActionResult)Ok(new { Message = "success", data = result }) : NotFound(new { Message = "not found" });
 
-            catch (Exception)
-            {
-                return NotFound();
-            }
 
         }
 
         [HttpPost]
-        public IActionResult Post(Products1 p)
+        public async Task<IActionResult> Post(CreateProductCommand data)
         {
-            var pro = p.data.attributes;
-            _context.ProductsData.Add(pro);
-
-            var time = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime()).TotalSeconds;
-            pro.created_at = (long)time;
-            pro.updated_at = (long)time;
-            _context.SaveChanges();
-
-            return Ok(new { message = "success retrieve data", status = true, data = pro });
+            var result = await _mediatr.Send(data);
+            return Ok(result);
         }
 
+
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                var del = _context.ProductsData.First(e => e.id == id);
+            var command = new DeleteProductCommand(id);
+            var result = await _mediatr.Send(command);
 
-                _context.ProductsData.Remove(del);
-                _context.SaveChanges();
-
-                return Ok("Your data has been deleted.");
-            }
-
-            catch (Exception)
-            {
-                return NotFound();
-            }
+            return command != null ? (IActionResult)Ok(new { Message = "success" }) : NotFound(new { Message = "not found" });
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Products1 p)
+        public async Task<IActionResult> Put(int id, UpdateProductCommand data)
         {
-            var pro = p.data.attributes;
-
             try
             {
-                var g = _context.ProductsData.Find(id);
-
-                g.merchant_id = pro.merchant_id;
-                g.name = pro.name;
-                g.price = pro.price;
-                var time = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime()).TotalSeconds;
-                g.updated_at = (long)time;
-
-                _context.SaveChanges();
-
-                var o = new Products
-                {
-                    id = g.id,
-                    merchant_id = pro.merchant_id,
-                    name = pro.name,
-                    price = pro.price,
-                    created_at = g.created_at,
-                    updated_at = g.updated_at
-                };
-                return Ok(new { message = "success retrieve data", status = true, data = o });
+                data.Data.id = id;
+                var result = await _mediatr.Send(data);
+                return Ok(result);
             }
 
             catch (Exception)
             {
                 return NotFound();
             }
-
         }
 
-        public class Products1
-        {
-            public Attributes4 data { get; set; }
-        }
-
-        public class Attributes4
-        {
-            public Products attributes { get; set; }
-        }
     }
+
+       
 }

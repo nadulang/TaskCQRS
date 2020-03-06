@@ -20,22 +20,31 @@ namespace TaskCQRS.Application.UseCases.CustomerPayment.Command.UpdateCustomerPa
         {
             var payment = _context.PaymentsData.Find(request.Data.id);
 
-            payment.customer_id = request.Data.customer_id;
-            payment.name_on_card = request.Data.name_on_card;
-            payment.exp_month = request.Data.exp_month;
-            payment.exp_year = request.Data.exp_year;
-            payment.postal_code = request.Data.postal_code;
-            payment.credit_card_number = request.Data.credit_card_number;
-            var time = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime()).TotalSeconds;
-            payment.updated_at = (long)time;
-
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return new UpdateCustomerPaymentCommandDto
+            if (payment == null)
             {
-                Success = true,
-                Message = "Customer successfully updated",
-            };
+                return null;
+            }
+
+            else
+            {
+
+                payment.customer_id = request.Data.customer_id;
+                payment.name_on_card = request.Data.name_on_card;
+                payment.exp_month = request.Data.exp_month;
+                payment.exp_year = request.Data.exp_year;
+                payment.postal_code = request.Data.postal_code;
+                payment.credit_card_number = request.Data.credit_card_number;
+                var time = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime()).TotalSeconds;
+                payment.updated_at = (long)time;
+
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return new UpdateCustomerPaymentCommandDto
+                {
+                    Success = true,
+                    Message = "Customer successfully updated",
+                };
+            }
         }
     }
 }

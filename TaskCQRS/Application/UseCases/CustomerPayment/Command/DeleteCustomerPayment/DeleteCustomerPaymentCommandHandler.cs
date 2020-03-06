@@ -22,11 +22,7 @@ namespace TaskCQRS.Application.UseCases.CustomerPayment.Command.DeleteCustomerPa
 
             if (delete == null)
             {
-                return new DeleteCustomerPaymentCommandDto
-                {
-                    Success = false,
-                    Message = "Not Found"
-                };
+                return null;
             }
 
             else

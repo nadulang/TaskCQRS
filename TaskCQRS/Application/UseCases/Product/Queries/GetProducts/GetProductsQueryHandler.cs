@@ -25,6 +25,7 @@ namespace TaskCQRS.Application.UseCases.Product.Queries.GetProducts
 
             var result = data.Select(e => new Products
             {
+                id = e.id,
                 merchant_id = e.merchant_id,
                 name = e.name,
                 price = e.price,

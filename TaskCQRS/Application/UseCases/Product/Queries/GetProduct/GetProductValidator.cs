@@ -5,7 +5,7 @@ namespace TaskCQRS.Application.UseCases.Product.Queries.GetProduct
     {
         public GetProductValidator()
         {
-            RuleFor(x => x.id).GreaterThan(0).NotEmpty().WithMessage("Id harus terdaftar.");
+            RuleFor(x => x.Id).GreaterThan(0).NotEmpty().WithMessage("Id harus terdaftar.");
         }
     }
 }

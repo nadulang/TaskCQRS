@@ -17,21 +17,20 @@ namespace TaskCQRS.Application.UseCases.Merchant.Queries.GetMerchant
 
         public async Task<GetMerchantDto> Handle(GetMerchantQuery request, CancellationToken cancellationToken)
         {
-            var result = await _context.MerchantsData.FirstOrDefaultAsync(e => e.id == request.id);
-            return new GetMerchantDto
+            var result = await _context.MerchantsData.FindAsync(request.id);
+            if (result == null)
             {
-                Success = true,
-                Message = "Customer succesfully retrieved",
-                Data =
+                return null;
+            }
+            else
+            {
+                return new GetMerchantDto
                 {
-                    name = result.name,
-                    image = result.image,
-                    address = result.address,
-                    rating = result.rating,
-                    created_at = result.created_at,
-                    updated_at = result.updated_at
-                }
-            };
+                    Success = true,
+                    Message = "Merchant succesfully retrieved",
+                    Data = result
+                };
+            }
         }
     }
 }

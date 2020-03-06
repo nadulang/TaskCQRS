@@ -22,11 +22,7 @@ namespace TaskCQRS.Application.UseCases.Merchant.Command.DeleteMerchant
 
             if (delete == null)
             {
-                return new DeleteMerchantCommandDto
-                {
-                    Success = false,
-                    Message = "Not Found"
-                };
+                return null;
             }
 
             else

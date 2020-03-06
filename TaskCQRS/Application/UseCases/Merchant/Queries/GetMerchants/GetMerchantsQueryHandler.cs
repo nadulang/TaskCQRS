@@ -25,6 +25,7 @@ namespace TaskCQRS.Application.UseCases.Merchant.Queries.GetMerchants
 
             var result = data.Select(e => new Merchants
             {
+                id = e.id,
                 name = e.name,
                 image = e.image,
                 address = e.address,

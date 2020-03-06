@@ -38,8 +38,9 @@ namespace TaskCQRS.Presenter.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<GetCustomerDto>> Get(int id)
         {
-            var result = new GetCustomerQuery(id);
-            return Ok(await _mediatr.Send(result));
+            var command = new GetCustomerQuery(id);
+            var result = await _mediatr.Send(command);
+            return command != null ? (ActionResult)Ok(new { Message = "success", data = result}) : NotFound(new { Message = "not found" });
         }
 
         [HttpPost]
@@ -56,13 +57,13 @@ namespace TaskCQRS.Presenter.Controllers
             var command = new DeleteCustomerCommand(id);
             var result = await _mediatr.Send(command);
 
-            return result != null ? (IActionResult)Ok(new { Message = "success" }) : NotFound(new { Message = "not found" });
+            return command != null ? (IActionResult)Ok(new { Message = "success" }) : NotFound(new { Message = "not found" });
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int ID, UpdateCustomerCommand data)
+        public async Task<IActionResult> Put(int id, UpdateCustomerCommand data)
         {
-            data.Data.id = ID;
+            data.Data.id = id;
             var result = await _mediatr.Send(data);
             return Ok(result);
         }

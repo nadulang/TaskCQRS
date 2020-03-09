@@ -20,6 +20,8 @@ using FluentValidation.AspNetCore;
 using TaskCQRS.Infrastructure.Persistences;
 using TaskCQRS.Application.UseCases.Customer.Queries.GetCustomer;
 using TaskCQRS.Application.UseCases.CustomerPayment.Queries.GetCustomerPayment;
+using TaskCQRS.Application.UseCases.Product.Queries.GetProduct;
+using TaskCQRS.Application.UseCases.Merchant.Queries.GetMerchant;
 using TaskCQRS.Application.Interfaces;
 using TaskCQRS.Domain.Entities;
 using TaskCQRS.Application.UseCases.Customer.Command.CreateCustomer;
@@ -31,6 +33,8 @@ using TaskCQRS.Application.UseCases.Merchant.Command.CreateMerchant;
 using TaskCQRS.Application.UseCases.Merchant.Command.UpdateMerchant;
 using TaskCQRS.Application.UseCases.Product.Command.CreateProduct;
 using TaskCQRS.Application.UseCases.Product.Command.UpdateProduct;
+using Hangfire;
+using Hangfire.PostgreSql;
 
 namespace TaskCQRS
 {
@@ -48,22 +52,13 @@ namespace TaskCQRS
         {
             services.AddDbContext<EcommerceContext>(options => options.UseNpgsql("Host=127.0.0.1;Database=ecommercedb;Username=postgres;Password=docker"));
             services.AddControllers();
+            services.AddHangfire(config =>
+                        config.UsePostgreSqlStorage("Host=127.0.0.1;Database=cobabackgrounddb;Username=postgres;Password=docker"));
             services.AddMvc()
-                   .AddFluentValidation();
+                   .AddFluentValidation(opt => opt.RegisterValidatorsFromAssemblyContaining(typeof(CreateProductCommandValidation)));
 
-            services.AddTransient<IValidator<CreateCustomerCommand>, CreateCustomerCommandValidation>()
-                    .AddTransient<IValidator<UpdateCustomerCommand>, UpdateCustomerCommandValidation>();
-            services.AddTransient<IValidator<CreateCustomerPaymentCommand>, CreateCustomerPaymentCommandValidation>()
-                    .AddTransient<IValidator<UpdateCustomerPaymentCommand>, UpdateCustomerPaymentCommandValidation>();
-            services.AddTransient<IValidator<CreateMerchantCommand>, CreateMerchantCommandValidaton>()
-                    .AddTransient<IValidator<UpdateMerchantCommand>, UpdateMerchantCommandValidation>();
-            services.AddTransient<IValidator<CreateProductCommand>, CreateProductCommandValidation>()
-                    .AddTransient<IValidator<UpdateProductCommand>, UpdateProductCommandValidation>();
-
-
-            services.AddMediatR(typeof(GetCustomerQueryHandler).GetTypeInfo().Assembly)
-                    .AddMediatR(typeof(GetCustomerPaymentQueryHandler).GetTypeInfo().Assembly);
-
+            services.AddMediatR(typeof(GetCustomerQueryHandler).GetTypeInfo().Assembly);
+       
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidatorBehaviour<,>));
 
             services.AddAuthentication(options => {
@@ -89,6 +84,12 @@ namespace TaskCQRS
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseHangfireServer();
+
+            app.UseHangfireDashboard();
+            BackgroundJob.Enqueue(() => Console.WriteLine("Coba Hangfire."));
+            RecurringJob.AddOrUpdate(() => Console.WriteLine("Recurring Task"), Cron.Minutely);
 
             //app.UseHttpsRedirection();
 

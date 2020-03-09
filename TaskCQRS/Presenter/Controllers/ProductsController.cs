@@ -47,7 +47,7 @@ namespace TaskCQRS.Presenter.Controllers
             
             var command = new GetProductQuery(id);
             var result = await _mediatr.Send(command);
-            return command != null ? (ActionResult)Ok(new { Message = "success", data = result }) : NotFound(new { Message = "not found" });
+            return result != null ? (ActionResult)Ok(new { Message = "success", data = result }) : NotFound(new { Message = "not found" });
 
 
         }

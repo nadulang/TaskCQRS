@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using TaskCQRS.Domain.Entities;
 using MediatR;
 using System.Threading.Tasks;
+using Hangfire;
 
 namespace TaskCQRS.Presenter.Controllers
 {
@@ -40,7 +41,7 @@ namespace TaskCQRS.Presenter.Controllers
         {
             var command = new GetCustomerQuery(id);
             var result = await _mediatr.Send(command);
-            return command != null ? (ActionResult)Ok(new { Message = "success", data = result}) : NotFound(new { Message = "not found" });
+            return result != null ? (ActionResult)Ok(new { Message = "success", data = result}) : NotFound(new { Message = "not found" });
         }
 
         [HttpPost]
